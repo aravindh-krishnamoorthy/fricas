@@ -785,6 +785,7 @@ enable_gmp
 enable_debug_compiler
 enable_algebra_optimization
 with_x
+with_ht
 enable_aldor
 with_aldor_binary
 '
@@ -1447,6 +1448,7 @@ Optional Packages:
   --with-gmp-include=PATH specify directory for installed GMP include files
   --with-gmp-lib=PATH     specify directory for the installed GMP library
   --with-x                use the X Window System
+  --with-ht               Enable HyperDoc (disabled by default)
   --with-aldor-binary=PATH
                           use the aldor binary given
 
@@ -6928,13 +6930,19 @@ fi
 
 
 
+
+# Disable HyperDoc by default unless --with-ht is specified.
 if test x"$fricas_has_xpm" = xyes; then
-   ac_fn_c_check_header_compile "$LINENO" "regex.h" "ac_cv_header_regex_h" "$ac_includes_default"
+
+# Check whether --with-ht was given.
+if test ${with_ht+y}
+then :
+  withval=$with_ht; ac_fn_c_check_header_compile "$LINENO" "regex.h" "ac_cv_header_regex_h" "$ac_includes_default"
 if test "x$ac_cv_header_regex_h" = xyes
 then :
   fricas_src_all="$fricas_src_all all-hyper all-doc"
-                    fricas_src_subdirs="$fricas_src_subdirs hyper doc"
-                    for ac_prog in xvfb-run
+                     fricas_src_subdirs="$fricas_src_subdirs hyper doc"
+                     for ac_prog in xvfb-run
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -6981,17 +6989,24 @@ fi
   test -n "$XVFB_RUN" && break
 done
 
-                    if test -n "$XVFB_RUN"; then
-                        MAYBE_VIEWPORTS=viewports
-                        XVFB="xvfb-run -a -s '-screen 0 1024x768x24'"
-                    else
-                        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: HyperDoc graphics must be built separately." >&5
+                     if test -n "$XVFB_RUN"; then
+                           MAYBE_VIEWPORTS=viewports
+                           XVFB="xvfb-run -a -s '-screen 0 1024x768x24'"
+                           { printf "%s\n" "$as_me:${as_lineno-$LINENO}: HyperDoc is enabled." >&5
+printf "%s\n" "$as_me: HyperDoc is enabled." >&6;}
+                     else
+                           { printf "%s\n" "$as_me:${as_lineno-$LINENO}: HyperDoc graphics must be built separately." >&5
 printf "%s\n" "$as_me: HyperDoc graphics must be built separately." >&6;}
-                    fi
+                     fi
 
 else $as_nop
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: HyperDoc is disabled." >&5
 printf "%s\n" "$as_me: HyperDoc is disabled." >&6;}
+fi
+
+else $as_nop
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: HyperDoc is disabled (default)." >&5
+printf "%s\n" "$as_me: WARNING: HyperDoc is disabled (default)." >&2;}
 fi
 
 fi

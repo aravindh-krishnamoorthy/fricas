@@ -750,19 +750,25 @@ fi
 AC_SUBST(fricas_src_all)
 AC_SUBST(MAYBE_VIEWPORTS)
 AC_SUBST(XVFB)
+
+# Disable HyperDoc by default unless --with-ht is specified.
 if test x"$fricas_has_xpm" = xyes; then
-   AC_CHECK_HEADER([regex.h],
-                   [fricas_src_all="$fricas_src_all all-hyper all-doc"
-                    fricas_src_subdirs="$fricas_src_subdirs hyper doc"
-                    AC_CHECK_PROGS([XVFB_RUN], [xvfb-run])
-                    if test -n "$XVFB_RUN"; then
-                        MAYBE_VIEWPORTS=viewports
-                        XVFB="xvfb-run -a -s '-screen 0 1024x768x24'"
-                    else
-                        AC_MSG_NOTICE([HyperDoc graphics must be built separately.])
-                    fi
-                   ],
-                   [AC_MSG_NOTICE([HyperDoc is disabled.])])
+   AC_ARG_WITH([ht],
+      [AS_HELP_STRING([--with-ht], [Enable HyperDoc (disabled by default)])],
+      [AC_CHECK_HEADER([regex.h],
+                     [fricas_src_all="$fricas_src_all all-hyper all-doc"
+                     fricas_src_subdirs="$fricas_src_subdirs hyper doc"
+                     AC_CHECK_PROGS([XVFB_RUN], [xvfb-run])
+                     if test -n "$XVFB_RUN"; then
+                           MAYBE_VIEWPORTS=viewports
+                           XVFB="xvfb-run -a -s '-screen 0 1024x768x24'"
+                           AC_MSG_NOTICE([HyperDoc is enabled.])
+                     else
+                           AC_MSG_NOTICE([HyperDoc graphics must be built separately.])
+                     fi
+                     ],
+                     [AC_MSG_NOTICE([HyperDoc is disabled.])])],
+      [AC_MSG_WARN([HyperDoc is disabled (default).])])
 fi
 # We need the Makefile (for util.ht) even if we do not build HyperDoc.
 FRICAS_MAKEFILE([src/hyper/Makefile])
